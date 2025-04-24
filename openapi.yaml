@@ -1,0 +1,57 @@
+openapi: 3.0.1
+info:
+  title: SSL Expiry API
+  version: 1.0.0
+  description: |
+    Returns SSL certificate details for any domain:
+    - issuer
+    - valid_to (ISO timestamp)
+    - days_left
+servers:
+  - url: https://ssl-check2.talben123.workers.dev
+paths:
+  /:
+    get:
+      summary: Get SSL certificate expiry info
+      parameters:
+        - name: host
+          in: query
+          description: The domain to check (e.g. example.com)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Certificate found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  host:
+                    type: string
+                  issuer:
+                    type: string
+                  valid_to:
+                    type: string
+                    format: date-time
+                  days_left:
+                    type: integer
+        '400':
+          description: Missing host parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '502':
+          description: Certificate fetch failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
